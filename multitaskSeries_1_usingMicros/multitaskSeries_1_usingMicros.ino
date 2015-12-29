@@ -4,8 +4,10 @@
  Author:	gonzaleze
 */
 uint8_t eLED = 13;
-uint32_t tON = 250;
-uint32_t tOFF = 500;
+uint8_t LEDstate = LOW;
+uint32_t prevMillis = 0;
+uint32_t tON = 10;
+uint32_t tOFF = 300;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -14,8 +16,16 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	digitalWrite(eLED, HIGH);
-	delay(tON);
-	digitalWrite(eLED, LOW);
-	delay(tOFF);
+	unsigned long currMillis = millis();
+
+	if ((LEDstate) && (currMillis - prevMillis >= tON)) {
+		LEDstate = LOW;
+		prevMillis = currMillis;
+		digitalWrite(eLED, LEDstate);
+	}
+	else if ((LEDstate == LOW) && (currMillis - prevMillis >= tOFF)) {
+		LEDstate = HIGH;
+		prevMillis = currMillis;
+		digitalWrite(eLED, LEDstate);
+	}
 }
