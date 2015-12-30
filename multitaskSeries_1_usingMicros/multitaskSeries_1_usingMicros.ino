@@ -64,7 +64,7 @@ void setup() {
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	led1.blink(10, 400);
-	led2.blink(300, 50);
+	led1.blink(5, 400);
+	led2.blink(5, 500);
 	
 }
