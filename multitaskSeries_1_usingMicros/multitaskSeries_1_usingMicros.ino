@@ -11,31 +11,45 @@ class Blinker {
 	uint8_t eLED = 13;
 	uint32_t tON = 10;
 	uint32_t tOFF = 300;
+	uint32_t targetTime = 0;
+	uint8_t targetReached = 0;
 		// These maintin the current State
 	uint8_t LEDstate = LOW;
 	uint32_t prevMillis = 0;
+
+	private:
+	uint8_t timeElapsed(uint32_t target) {
+		targetTime = target;
+
+		unsigned long currMillis = millis();
+		if (currMillis - prevMillis >= targetTime) {
+			prevMillis = currMillis;
+			targetReached = 1;
+		}
+		else {
+			targetReached = 0;
+		}
+		return targetReached;
+	}
+
 	public:
 	Blinker(uint8_t pin) {
 		eLED = pin;
 		pinMode(eLED, OUTPUT);
-		
-
 		LEDstate = LOW;
 		prevMillis = 0;
 	}
-
+	
 	void blink(uint32_t on, uint32_t off) {
 		tON = on;
 		tOFF = off;
-		unsigned long currMillis = millis();
-		if ((LEDstate) && (currMillis - prevMillis >= tON)) {
+		
+		if ((LEDstate) && timeElapsed(tON)) {
 			LEDstate = LOW;
-			prevMillis = currMillis;
 			digitalWrite(eLED, LEDstate);
 		}
-		else if ((LEDstate == LOW) && (currMillis - prevMillis >= tOFF)) {
+		else if ((LEDstate == LOW) && timeElapsed(tOFF)) {
 			LEDstate = HIGH;
-			prevMillis = currMillis;
 			digitalWrite(eLED, LEDstate);
 		}
 	}
@@ -51,5 +65,6 @@ void setup() {
 // the loop function runs over and over again until power down or reset
 void loop() {
 	led1.blink(10, 400);
-	led2.blink(500, 500);
+	led2.blink(300, 50);
+	
 }
